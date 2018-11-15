@@ -20,9 +20,9 @@ function love.update(dt)
   for i,v in ipairs(starship.bullets) do
     v.x = v.x + 1000 * dt
     
-    if v.x <= -2 then
-      table.remove(starship.bullets, i)
-    end
+    --if v.x <= -2 then
+      --table.remove(starship.bullets, i)
+    --end
   end
   
   if love.keyboard.isDown("up") then
