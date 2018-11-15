@@ -36,7 +36,7 @@ function love.update(dt)
   if love.keyboard.isDown("space") then
     bullet = {}
     bullet.x = starship.x + 76
-    bullet.y = starship.y + 32.5
+    bullet.y = starship.y + 29
     table.insert(starship.bullets, bullet)
   end
   
