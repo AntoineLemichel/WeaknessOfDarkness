@@ -20,7 +20,7 @@ function love.update(dt)
   for i,v in ipairs(starship.bullets) do
     v.x = v.x + 1000 * dt
     
-    if v.x <= -2 then
+    if v.x >=900 then
       table.remove(starship.bullets, i)
     end
   end
@@ -54,10 +54,10 @@ function love.draw()
   end
   
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
-    	--love.graphics.setColor(255, 255, 255)
+    	love.graphics.setColor(255, 255, 255)
 
   for i,v in ipairs(starship.bullets) do
-    love.graphics.draw(shoot, bullet.x, bullet.y, 0, 0.4, 0.4)
+    love.graphics.draw(shoot, v.x, v.y, 0, 0.4, 0.4)
     		--love.graphics.rectangle("fill", v.x, v.y, 4, 4)
 
   end
