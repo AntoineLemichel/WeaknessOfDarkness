@@ -32,13 +32,13 @@ function love.update(dt)
   for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
     
-    if v.x >= 800 then
+    if v.x >= 775 then
       table.remove(starship.magics, i)
     end
   end
 
   for i,v in ipairs(enemies) do 
-    v.x = v.x - 300 * dt
+    v.x = v.x - 100 * dt
 
     if v.x <= - 2 then
       table.remove(enemies, i)
@@ -119,6 +119,10 @@ function love.draw()
     love.graphics.draw(enemyImage, v.x, v.y, 0, 0.6, 0.6)
   end
   
+  for i,v in ipairs(starship.attacks) do
+    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+  end
+  
   love.graphics.setColor(255, 255, 255)
 	love.graphics.print("score: "..tostring(score), 10, 10)
   
@@ -130,6 +134,7 @@ function love.draw()
     if magicshoot:isPlaying() then return end
     magicshoot:rewind()
     magicshoot:play()
+
   end
 
 end
