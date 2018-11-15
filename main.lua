@@ -101,6 +101,14 @@ function love.update(dt)
     v.x = v.x - 100 * dt
   end
   
+  if starship.y <= -31 then
+    starship.y = 550
+  end
+  
+  if starship.y >= 555 then
+    starship.y = -30
+  end
+  
 end
 
 
@@ -134,14 +142,6 @@ function love.draw()
     magicshoot:rewind()
     magicshoot:play()
 
-  end
-
-  if starship.y <= -31 then
-    starship.y = 550
-  end
-  
-  if starship.y >= 555 then
-    starship.y = -30
   end
 
 end
