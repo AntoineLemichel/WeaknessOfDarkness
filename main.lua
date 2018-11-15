@@ -100,7 +100,14 @@ function love.update(dt)
   for i,v in ipairs(enemies) do
     v.x = v.x - 100 * dt
   end
+ 
+  if starship.y <= -31 then
+    starship.y = 550
+  end
   
+  if starship.y >= 555 then
+    starship.y = -30
+  end
   
 end
 
@@ -120,7 +127,7 @@ function love.draw()
   end
   
   for i,v in ipairs(starship.attacks) do
-    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)@
   end
   
   love.graphics.setColor(255, 255, 255)
@@ -135,6 +142,20 @@ function love.draw()
     magicshoot:rewind()
     magicshoot:play()
   end
+  
+  love.graphics.setColor(255, 255, 255)
+	love.graphics.print("score: "..tostring(score), 10, 10)
+  
+  for i,v in ipairs(starship.magics) do
+    love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
+    v.magicshoot:play()
+  end
+  for i,v in ipairs(starship.magics) do
+    if magicshoot:isPlaying() then return end
+    magicshoot:rewind()
+    magicshoot:play()
+  end
+
   end
 
 function backgroundVideo()
