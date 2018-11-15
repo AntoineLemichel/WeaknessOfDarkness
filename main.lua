@@ -8,8 +8,7 @@
  starship.attacks = {}
 
 function love.load()
-  love.window.setTitle("Weakness of Darkness")
-
+  
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
  
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
@@ -32,6 +31,14 @@ function love.update(dt)
     
     if v.x >= 900 then
       table.remove(starship.bullets, i)
+    end
+  end
+
+  for i,v in ipairs(enemies) do 
+    v.x = v.x - 300 * dt
+
+    if v.x <= - 2 then
+      table.remove(enemies, i)
     end
   end
   
@@ -95,28 +102,26 @@ function love.draw()
       love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
     end
   end
-  
+
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
-  
-  for i,v in ipairs(enemies) do
-    love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
-  end
-  for i,v in ipairs(starship.attacks) do
-    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+
+  for i,v  in ipairs(enemies) do 
+    love.graphics.draw(enemyImage, v.x, v.y, 0, 0.6, 0.6)
   end
   for i,v in ipairs(starship.bullets) do
-    love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
-    v.magicshoot:play()
+    love.graphics.draw(v.shoot, v.x, v.y, 0, 0.03, 0.03)
+    v.shoot:play()
   end
   for i,v in ipairs(starship.bullets) do
-    if magicshoot:isPlaying() then return end
-    magicshoot:rewind()
-    magicshoot:play()
+    if shoot:isPlaying() then return end
+    shoot:rewind()
+    shoot:play()
   end
 
 end
 
 function backgroundVideo()
+  -- This function, play background video at loop
   if background:isPlaying() then return end
   background:rewind()
   background:play()
