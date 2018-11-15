@@ -4,8 +4,10 @@
  starship.x = 0
  starship.y = 300
  starship.speed = 300
- starship.bullets = {}
+ starship.magics = {}
  starship.attacks = {}
+ 
+ score = 0
 
 function love.load()
   love.window.setTitle("Weakness of Darkness")
@@ -26,23 +28,29 @@ end
 
 function love.update(dt)
   backgroundVideo()
+  bulletCollision()
 
-  for i,v in ipairs(starship.bullets) do
+  for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
     
-    if v.x >= 900 then
-      table.remove(starship.bullets, i)
+    if v.x >= 800 then
+      table.remove(starship.magics, i)
     end
   end
   
   for i,v in ipairs(starship.attacks) do
     v.x = v.x + 1000 * dt
     
-    if v.x >=900 then
+    if v.x >=775 then
       table.remove(starship.attacks, i)
     end
   end
   
+  for i,v in ipairs(enemies) do
+    if v.x <= -2 then
+      table.remove(enemies, i)
+    end
+  end
   
   if love.keyboard.isDown("up") then
     starship.y = starship.y - starship.speed * dt
@@ -55,11 +63,11 @@ function love.update(dt)
   cooldown = math.max(cooldown - dt,0)
   if love.keyboard.isDown("space") and cooldown == 0 then
     cooldown = 0.3
-    bullet = {}
-    bullet.x = starship.x + 54
-    bullet.y = starship.y + 28
-    bullet.magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
-    table.insert(starship.bullets, bullet)
+    magic = {}
+    magic.x = starship.x + 54
+    magic.y = starship.y + 28
+    magic.magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
+    table.insert(starship.magics, magic)
   end
   
   cooldown2 = math.max(cooldown2 - dt,0)
@@ -85,6 +93,8 @@ function love.update(dt)
   for i,v in ipairs(enemies) do
     v.x = v.x - 100 * dt
   end
+  
+  
 end
 
 
@@ -104,11 +114,15 @@ function love.draw()
   for i,v in ipairs(starship.attacks) do
     love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
   end
-  for i,v in ipairs(starship.bullets) do
+  
+  love.graphics.setColor(255, 255, 255)
+	love.graphics.print("score: "..tostring(score), 10, 10)
+  
+  for i,v in ipairs(starship.magics) do
     love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
     v.magicshoot:play()
   end
-  for i,v in ipairs(starship.bullets) do
+  for i,v in ipairs(starship.magics) do
     if magicshoot:isPlaying() then return end
     magicshoot:rewind()
     magicshoot:play()
@@ -129,4 +143,31 @@ function enemySpawn ()
   enemy.y = math.random(550, 0)
   enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
   table.insert(enemies, enemy)
+end
+
+function bulletCollision()
+	for i,v in ipairs(enemies) do
+		for ia, va in ipairs(starship.magics) do
+			if va.x + 4 > v.x and
+        va.x < v.x + 30 and
+        va.y + 4 > v.y and
+        va.y < v.y + 30 then
+          
+          score = score + 50
+          table.remove(enemies, i)
+          table.remove(starship.magics, ia)
+			end
+		end
+    for ia, va in ipairs(starship.attacks) do
+			if va.x + 4 > v.x and
+        va.x < v.x + 30 and
+        va.y + 4 > v.y and
+        va.y < v.y + 30 then
+          
+          score = score + 50
+          table.remove(enemies, i)
+          table.remove(starship.attacks, ia)
+			end
+		end
+	end
 end
