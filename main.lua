@@ -127,7 +127,7 @@ function love.draw()
   end
   
   for i,v in ipairs(starship.attacks) do
-    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)@
+    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
   end
   
   love.graphics.setColor(255, 255, 255)
