@@ -1,12 +1,20 @@
 function love.load()
-  love.window.setTitle("Weakness of Darkness")
-
+  
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
+  
+  starship = love.graphics.newImage('/assets/pictures/ship/starship.png')
+  enemyPhysics = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
 
-  starship = love.graphics.newImage('/assets/pictures/starship.png')
   starshipX = 0
   starshipY = 300
   starshipSpeed = 300
+
+
+  enemyPhysicsX = 0
+  enemyPhysicsY = 0
+  enemyPhysicsSpeed = 300
+  enemyPhysicsDelay = 100
+  enemyPhysicsNumber = 0
 
 end
 
@@ -21,6 +29,14 @@ function love.update(dt)
   if love.keyboard.isDown("down") then
     starshipY = starshipY + starshipSpeed * dt
   end
+
+
+  if enemyPhysicsNumber > 0 and enemyPhysicsNumber < 24 then
+    enemyPhysicsX = love.math.random(10, 200)
+    spawnEnemyPhysics(enemyPhysicsX)
+    enemyPhysicsNumber = enemyPhysicsNumber + 1
+  end
+
 end
 
 
@@ -37,4 +53,9 @@ function backgroundVideo()
   if background:isPlaying() then return end
   background:rewind()
   background:play()
+end
+
+
+function spawnEnemyPhysics()
+  love.graphics.draw(enemyPhysics, enemyPhysicsX, enemyPhysicsY, 0, 0.6, 0.6)
 end
