@@ -11,6 +11,9 @@ enemies = {}
 
 function love.load()
   
+  music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
+
+
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
  
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
@@ -135,7 +138,10 @@ function love.draw()
     magicshoot:rewind()
     magicshoot:play()
   end
-  end
+  
+   music:play()
+   
+end
 
 function backgroundVideo()
   -- This function, play background video at loop
