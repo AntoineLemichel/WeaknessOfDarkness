@@ -10,8 +10,7 @@
  score = 0
 
 function love.load()
-  love.window.setTitle("Weakness of Darkness")
-
+  
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
  
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
@@ -35,6 +34,14 @@ function love.update(dt)
     
     if v.x >= 800 then
       table.remove(starship.magics, i)
+    end
+  end
+
+  for i,v in ipairs(enemies) do 
+    v.x = v.x - 300 * dt
+
+    if v.x <= - 2 then
+      table.remove(enemies, i)
     end
   end
   
@@ -105,14 +112,11 @@ function love.draw()
       love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
     end
   end
-  
+
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
-  
-  for i,v in ipairs(enemies) do
-    love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
-  end
-  for i,v in ipairs(starship.attacks) do
-    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+
+  for i,v  in ipairs(enemies) do 
+    love.graphics.draw(enemyImage, v.x, v.y, 0, 0.6, 0.6)
   end
   
   love.graphics.setColor(255, 255, 255)
@@ -131,6 +135,7 @@ function love.draw()
 end
 
 function backgroundVideo()
+  -- This function, play background video at loop
   if background:isPlaying() then return end
   background:rewind()
   background:play()
