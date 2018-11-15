@@ -103,7 +103,14 @@ function love.update(dt)
   for i,v in ipairs(enemies) do
     v.x = v.x - 100 * dt
   end
+ 
+  if starship.y <= -31 then
+    starship.y = 550
+  end
   
+  if starship.y >= 555 then
+    starship.y = -30
+  end
   
 end
 
