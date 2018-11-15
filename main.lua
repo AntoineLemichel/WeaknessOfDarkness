@@ -1,4 +1,4 @@
- enemies = {}
+enemies = {}
  
  starship = {}
  starship.x = 0
@@ -134,10 +134,8 @@ function love.draw()
     if magicshoot:isPlaying() then return end
     magicshoot:rewind()
     magicshoot:play()
-
   end
-
-end
+  end
 
 function backgroundVideo()
   -- This function, play background video at loop
