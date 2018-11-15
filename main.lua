@@ -4,9 +4,10 @@ function love.load()
   
   enemies = {}
   enemies.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
-  enemies.speed = 300
+  enemies.x = 0
+  enemies.y = 0
+  --enemies..speed = 10
   enemies.delay = 0
-  
 
 
   starship = {}
@@ -16,6 +17,7 @@ function love.load()
   starship.speed = 300
   starship.bullets = {}
   shoot = love.graphics.newImage('/assets/pictures/ship/ph3.png')
+  -- testImage = love.graphics.newImage('/assets/pictures/ship/enemy.png')
 
 
 end
@@ -29,6 +31,14 @@ function love.update(dt)
     
     if v.x <= -2 then
       table.remove(starship.bullets, i)
+    end
+  end
+
+  for i,v in ipairs(enemies) do 
+    v.x = v.x - 300 * dt
+
+    if v.x <= - 2 then
+      table.remove(enemies, i)
     end
   end
   
@@ -48,10 +58,10 @@ function love.update(dt)
   end
 
   enemies.delay = enemies.delay + dt
-  if enemies.delay >= 3 then
+  if enemies.delay >= 1 then
     enemies.x = love.math.random(0, love.graphics.getWidth() - 64)
     enemies.y = love.math.random(love.graphics.getHeight() / 2, love.graphics.getHeight() - 64)
-    table.insert(enemies, enemies.image)
+    table.insert(enemies, enemies)
     enemies.delay = 0
   end
   
@@ -71,11 +81,11 @@ function love.draw()
 
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
 
-  for i,v in ipairs(starship.bullets) do
-    love.graphics.draw(shoot, bullet.x, bullet.y, 0, 0.4, 0.4)
-  end
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(enemies.image, v.x, v.y, 0, 0.6, 0.6)
+  end
+  for i,v in ipairs(starship.bullets) do
+    love.graphics.draw(shoot, v.x, v.y, 0, 0.4, 0.4)
   end
 end
 
