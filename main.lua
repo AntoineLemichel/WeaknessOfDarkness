@@ -45,6 +45,9 @@ function love.update(dt)
   bulletCollision()
   ballCollision()
 
+
+  -- Setup bullet magics speed and check collision with world bounds
+
   for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
     
@@ -52,6 +55,9 @@ function love.update(dt)
       table.remove(starship.magics, i)
     end
   end
+  -- 
+
+  -- Setup enemies speed with check collision with world bounds
 
   for i,v in ipairs(enemies) do 
     v.x = v.x - 100 * dt
@@ -60,7 +66,10 @@ function love.update(dt)
       table.remove(enemies, i)
     end
   end
-  
+
+  -- 
+  -- Setup speed Orbs and check collision with world bounds
+
   for i,v in ipairs(orbs) do
     v.x = v.x - 200 * dt
     
@@ -68,8 +77,9 @@ function love.update(dt)
       table.remove(orbs, i)
     end
   end
+  -- 
   
-  
+  -- Setup bullet physics speed and check collision with world bounds
   for i,v in ipairs(starship.attacks) do
     v.x = v.x + 1000 * dt
     
@@ -77,19 +87,27 @@ function love.update(dt)
       table.remove(starship.attacks, i)
     end
   end
+  -- 
   
-  
+  -- Setup speed axe y with if arrow up is down
   if love.keyboard.isDown("up") then
     starship.y = starship.y - starship.speed * dt
   end
+-- 
 
+-- Setup speed axe y with arrow down is down
   if love.keyboard.isDown("down") then
     starship.y = starship.y + starship.speed * dt
   end
+-- 
+
+-- Setup quit game if escape is pressed
   if love.keyboard.isDown('escape') then
     love.event.quit()
   end
-  
+-- 
+
+-- Setup shoot magics if spacebar is down
   cooldown = math.max(cooldown - dt,0)
   if love.keyboard.isDown("space") and cooldown == 0 then
     cooldown = 0.3
@@ -99,7 +117,9 @@ function love.update(dt)
     magic.magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
     table.insert(starship.magics, magic)
   end
-  
+--
+
+-- Setup shoot physics if A is down
   cooldown2 = math.max(cooldown2 - dt,0)
   if love.keyboard.isDown('a') and cooldown2 == 0 then
     cooldown2 = 0.15
@@ -115,56 +135,57 @@ function love.update(dt)
     table.insert(starship.attacks, attack2)
   end
   
+-- Setup cooldown spawn ennemies
   cooldown3 = math.max(cooldown3 - dt,0)
   if cooldown3 == 0 then
     enemySpawn()
   end
+-- 
+
+--  If player touch height screen world
   
   if starship.y <= -31 then
     starship.y = fullscreenHeight - 200
   end
-  
   if starship.y >= fullscreenHeight - 160 then
     starship.y = -30
   end
-  
+-- 
 end
 
 
 function love.draw()
-  
+  -- Draw background with fullscreen
   for i = 0, love.graphics.getWidth() / background:getWidth() do
     for j = 0, love.graphics.getHeight() / background:getHeight() do
       love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
     end
   end
+-- 
+  love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2) -- Draw player's starship
   
-  love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
-  
+
+  -- Draw all of enemies in array
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
   end
-  
+-- 
+
+-- Draw all of enemies's shoot in array
   for i,v  in ipairs(enemies.shot) do 
     love.graphics.draw(v.enemyShot.image, v.x, v.y, 0, 0.6, 0.6)
   end
-  
+-- 
+
+-- Draw all Orbs (strenght, agility, magics and armor) in array
   for i,v in ipairs(orbs) do
     love.graphics.draw(v.image, v.x, v.y, 0, 0.2, 0.2)
   end
-  
-  for i,v  in ipairs(orbs) do
-    love.graphics.draw(v.image, v.x, v.y, 0, 0.2, 0.2)
-  end
-  
-  for i,v in ipairs(starship.attacks) do
-    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
-    attackshot:play()
-  end
+--
 
+-- Draw all HUD (player's life, armor, physics, agility and magic)
   love.graphics.setColor(0, 0, 0, 1)
   love.graphics.rectangle('fill', 0, (fullscreenHeight - 130), love.graphics.getWidth(), 130)
-
   love.graphics.setColor(246, 255, 255, 0.5)
   love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
   love.graphics.setColor(246, 255, 0, 0.5)
@@ -175,20 +196,37 @@ function love.draw()
   love.graphics.rectangle('fill', 10, fullscreenHeight - 70, starship.agility, 20)
   love.graphics.setColor(0,0,255,0.5)
   love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magic, 20)
+
+
   love.graphics.setColor(255, 255, 255)
-	love.graphics.print("score: "..tostring(score), 10, 10)
+	love.graphics.print("score: "..tostring(score), 10, 10) -- Setup scrore
+-- 
+
+
+-- Draw all starship's physics shoot
   
+  for i,v in ipairs(starship.attacks) do
+    love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+    attackshot:play()
+  end
+
+-- 
+-- Draw all starhsip's magics shoot
   for i,v in ipairs(starship.magics) do
     love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
     v.magicshoot:play()
   end
+-- 
+
+-- Play sounds after starship shoot magics
   for i,v in ipairs(starship.magics) do
     if magicshoot:isPlaying() then return end
     lasershot:play()
-
 end
-  music:setVolume(0.5)
-  music:play()
+
+-- 
+  music:setVolume(0.5) -- Setup volume for background music
+  music:play() -- Launch background music
    
 end
 
@@ -200,6 +238,7 @@ function backgroundVideo()
 end
 
 function enemySpawn ()
+-- This function, manage spawn ennemies and random type (physics or magics)
   cooldown3 = 1
   enemy = {}
 
@@ -221,9 +260,8 @@ function enemySpawn ()
 end
 
 function bulletCollision()
-	for i,v in ipairs(enemies) do
-    
-          
+-- This function, manage collision with another object (enemies, orbs) 
+	for i,v in ipairs(enemies) do     
 		for ia, va in ipairs(starship.magics) do
 			if va.x + 4 > v.x and
         va.x < v.x + 30 and
@@ -231,7 +269,6 @@ function bulletCollision()
         va.y < v.y + 37 then
           
           spawnOrbs(enemies[i].x, enemies[i].y)
-          
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.magics, ia)
@@ -244,7 +281,6 @@ function bulletCollision()
         va.y < v.y + 35 then
           
           spawnOrbs(enemies[i].x, enemies[i].y)
-          
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.attacks, ia)
@@ -254,7 +290,7 @@ function bulletCollision()
 end
 
 function spawnOrbs(x,y)
-      
+-- This function, manage spawn Orbs with random type (Physics, magics, armor or agility) 
     randomOrbs = {}
     randomOrbs.type = love.math.random(0, 30)
     randomOrbs.x = x
@@ -277,14 +313,13 @@ function spawnOrbs(x,y)
 end
 
 function ballCollision()
-  
-		for ia, va in ipairs(orbs) do
-			if va.x + 8 > starship.x and
-        va.x < starship.x + 70 and
-        va.y + 8 > starship.y and
-        va.y < starship.y + 70 then
-          
-          table.remove(orbs, ia)
-      end
+  for ia, va in ipairs(orbs) do
+    if va.x + 8 > starship.x and
+      va.x < starship.x + 70 and
+      va.y + 8 > starship.y and
+      va.y < starship.y + 70 then
+        
+      table.remove(orbs, ia)
+    end
 	end
 end 
