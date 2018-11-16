@@ -99,7 +99,14 @@ function love.update(dt)
   if love.keyboard.isDown("down") then
     starship.y = starship.y + starship.speed * dt
   end
--- 
+--
+  if love.keyboard.isDown("left") and score > 1000 then
+    starship.x = starship.x - starship.speed * dt
+  end
+
+  if love.keyboard.isDown("right") and score > 1000 then
+    starship.x = starship.x + starship.speed * dt
+  end
 
 -- Setup quit game if escape is pressed
   if love.keyboard.isDown('escape') then
@@ -211,7 +218,7 @@ function love.draw()
   end
 
 -- 
--- Draw all starhsip's magics shoot
+-- Draw all starship's magics shoot
   for i,v in ipairs(starship.magics) do
     love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
     v.magicshoot:play()
