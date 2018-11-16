@@ -13,6 +13,7 @@ function love.load()
   
   music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
   lasershot = love.audio.newSource('/assets/pictures/sound/lasershot.wav','static')
+  attackshot = love.audio.newSource('/assets/pictures/sound/attackshot.wav','static')
   enemydestroy = love.audio.newSource('/assets/pictures/sound/enemydestroy.wav','static')
 
 
@@ -133,6 +134,7 @@ function love.draw()
   
   for i,v in ipairs(starship.attacks) do
     love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+    attackshot:play()
   end
   
   love.graphics.setColor(255, 255, 255)
@@ -144,13 +146,11 @@ function love.draw()
   end
   for i,v in ipairs(starship.magics) do
     if magicshoot:isPlaying() then return end
-    magicshoot:rewind()
-    magicshoot:play()
     lasershot:play()
 
 end
   music:setVolume(0.5)
-   music:play()
+  music:play()
    
 end
 
