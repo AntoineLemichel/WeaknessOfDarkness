@@ -15,7 +15,6 @@ function love.load()
   lasershot = love.audio.newSource('/assets/pictures/sound/lasershot.wav','static')
   enemydestroy = love.audio.newSource('/assets/pictures/sound/enemydestroy.wav','static')
 
-
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
  
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
