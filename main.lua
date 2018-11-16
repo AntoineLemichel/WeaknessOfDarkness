@@ -11,6 +11,9 @@ enemies = {}
 
 function love.load()
   
+  music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
+
+
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
  
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
@@ -143,20 +146,9 @@ function love.draw()
     magicshoot:play()
   end
   
-  love.graphics.setColor(255, 255, 255)
-	love.graphics.print("score: "..tostring(score), 10, 10)
-  
-  for i,v in ipairs(starship.magics) do
-    love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
-    v.magicshoot:play()
-  end
-  for i,v in ipairs(starship.magics) do
-    if magicshoot:isPlaying() then return end
-    magicshoot:rewind()
-    magicshoot:play()
-  end
-
-  end
+   music:play()
+   
+end
 
 function backgroundVideo()
   -- This function, play background video at loop
