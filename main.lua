@@ -332,18 +332,38 @@ function ballCollision()
       va.y + 8 > starship.y and
       va.y < starship.y + 70 then
       -- Add statistics
-      if va.type == 0 and starship.magic < 250 and starship.physics > 0 then
-          starship.magic = starship.magic + 5
-          starship.physics = starship.physics - 10
-      elseif va.type == 1 and starship.agility < 250 and starship.armor > 0 then
-          starship.agility = starship.agility + 5
-          starship.armor = starship.armor - 10
-      elseif va.type == 2 and starship.armor < 250 and starship.agility > 0 then
-          starship.armor = starship.armor + 5
-          starship.agility = starship.agility - 10
-      elseif va.type == 3 and starship.physics < 250 and starship.magic > 0 then
-          starship.physics = starship.physics + 5
-          starship.magic = starship.magic - 10
+      if va.type == 0 and starship.physics > 0 then
+        starship.physics = starship.physics - 5
+        if starship.magic < 250 then
+          starship.magic = starship.magic + 10
+          if starship.magic > 250 then
+            starship.magic = 250
+          end
+        end
+      elseif va.type == 1 and starship.armor > 0 then
+        starship.armor = starship.armor - 5
+        if starship.agility < 250 then
+          starship.agility = starship.agility + 10
+          if starship.agility > 250 then
+            starship.agility = 250
+          end
+        end
+      elseif va.type == 2 and starship.agility > 0 then
+        starship.agility = starship.agility - 5
+        if starship.armor < 250 then
+          starship.armor = starship.armor + 10
+          if starship.armor > 250 then
+            starship.armor = 250
+          end
+        end
+      elseif va.type == 3 and starship.physics <= 240 and starship.magic > 0 then
+        starship.magic = starship.magic - 5
+        if starship.physics < 250 then
+          starship.physics = starship.physics + 10
+          if starship.physics > 250 then
+            starship.physics = 250
+          end
+        end
       end
       --
       table.remove(orbs, ia)
