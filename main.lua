@@ -17,10 +17,10 @@ orbs = {}
 
 function love.load()
   
-  music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
-  lasershot = love.audio.newSource('/assets/pictures/sound/lasershot.wav','static')
-  attackshot = love.audio.newSource('/assets/pictures/sound/attackshot.wav','static')
-  enemydestroy = love.audio.newSource('/assets/pictures/sound/enemydestroy.wav','static')
+  music = love.audio.newSource('/assets/sounds/backgroundmusic.ogg','static')
+  lasershot = love.audio.newSource('/assets/sounds/lasershot.wav','static')
+  attackshot = love.audio.newSource('/assets/sounds/attackshot.wav','static')
+  enemydestroy = love.audio.newSource('/assets/sounds/enemydestroy.wav','static')
 
 
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
