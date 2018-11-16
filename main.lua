@@ -1,5 +1,4 @@
 enemies = {}
-enemies.shot = {}
 orbs = {}
  
  starship = {}
@@ -8,8 +7,8 @@ orbs = {}
  starship.speed = 300
  starship.magics = {}
  starship.attacks = {}
- starship.physics = 400
- starship.magic = 125
+ starship.attackPower = 400
+ starship.magicPower = 125
  starship.armor = 350
  starship.agility = 500
  starship.life = 100
@@ -168,12 +167,12 @@ function love.draw()
   -- Draw all of enemies in array
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
-  end
+    
+    -- Draw all of enemies's shoot in array
+    for ia,va  in ipairs(enemy.shot) do 
+      love.graphics.draw(va.image, va.x, va.y, 0, 0.6, 0.6)
+    end
 -- 
-
--- Draw all of enemies's shoot in array
-  for i,v  in ipairs(enemies.shot) do 
-    love.graphics.draw(v.enemyShot.image, v.x, v.y, 0, 0.6, 0.6)
   end
 -- 
 
@@ -191,11 +190,11 @@ function love.draw()
   love.graphics.setColor(246, 255, 0, 0.5)
   love.graphics.rectangle('fill', 10, fullscreenHeight - 30, starship.armor, 20)
   love.graphics.setColor(255, 0, 0, 0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 50, starship.physics, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 50, starship.attackPower, 20)
   love.graphics.setColor(0,255,0,0.5)
   love.graphics.rectangle('fill', 10, fullscreenHeight - 70, starship.agility, 20)
   love.graphics.setColor(0,0,255,0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magic, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magicPower, 20)
 
 
   love.graphics.setColor(255, 255, 255)
@@ -241,21 +240,22 @@ function enemySpawn ()
 -- This function, manage spawn ennemies and random type (physics or magics)
   cooldown3 = 1
   enemy = {}
+enemy.shot = {}
 
   enemy.x = fullscreenWidth
   enemy.y = math.random(fullscreenHeight - 170, 0)
   enemy.type = love.math.random(0, 1)
-  enemy.enemyShot = {}
-  enemy.enemyShot.x = enemy.x
-  enemy.enemyShot.y = enemy.y
+  enemyShot = {}
+  enemyShot.x = enemy.x
+  enemyShot.y = enemy.y
   if enemy.type == 0 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
-    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
+    enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
   elseif enemy.type == 1 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
-    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
+    enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
   end
-  --table.insert(enemies.shot, enemyShot)
+  table.insert(enemy.shot, enemyShot)
   table.insert(enemies, enemy)
 end
 
