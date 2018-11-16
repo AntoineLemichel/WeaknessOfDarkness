@@ -29,8 +29,7 @@ function love.load()
 
   magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
   attackshoot = love.graphics.newImage('/assets/pictures/ship/shotatt3.png')
-  enemyImage = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
-  enemyImage2 = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
+
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
@@ -44,6 +43,7 @@ end
 function love.update(dt)
   backgroundVideo()
   bulletCollision()
+  ballCollision()
 
   for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
@@ -58,6 +58,14 @@ function love.update(dt)
 
     if v.x <= - 2 then
       table.remove(enemies, i)
+    end
+  end
+  
+  for i,v in ipairs(orbs) do
+    v.x = v.x - 50 * dt
+    
+    if v.x <= -2 then
+      table.remove(orbs, i)
     end
   end
   
@@ -112,10 +120,6 @@ function love.update(dt)
     enemySpawn()
   end
   
-  for i,v in ipairs(enemies) do
-    v.x = v.x - 100 * dt
-  end
- 
   if starship.y <= -31 then
     starship.y = fullscreenHeight - 200
   end
@@ -213,7 +217,6 @@ function enemySpawn ()
     enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
   end
   --table.insert(enemies.shot, enemyShot)
-  enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
   table.insert(enemies, enemy)
 end
 
@@ -225,7 +228,7 @@ function bulletCollision()
 			if va.x + 4 > v.x and
         va.x < v.x + 30 and
         va.y + 4 > v.y and
-        va.y < v.y + 30 then
+        va.y < v.y + 37 then
           
           spawnOrbs(enemies[i].x, enemies[i].y)
           
@@ -238,7 +241,7 @@ function bulletCollision()
 			if va.x + 4 > v.x and
         va.x < v.x + 30 and
         va.y + 4 > v.y and
-        va.y < v.y + 30 then
+        va.y < v.y + 35 then
           
           spawnOrbs(enemies[i].x, enemies[i].y)
           
@@ -253,24 +256,35 @@ end
 function spawnOrbs(x,y)
       
     randomOrbs = {}
-    randomOrbs.type = love.math.random(0, 100)
+    randomOrbs.type = love.math.random(0, 30)
     randomOrbs.x = x
     randomOrbs.y = y
     
-    if randomOrbs.type >2 and randomOrbs.type <10 then
+    if randomOrbs.type == 0 then
       randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
       table.insert(orbs, randomOrbs)
-    elseif randomOrbs.type >11 and randomOrbs.type <20 then
+    elseif randomOrbs.type == 1 then
       randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
       table.insert(orbs, randomOrbs)
-    elseif randomOrbs.type >21 and randomOrbs.type <30 then
+    elseif randomOrbs.type == 2 then
       randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
       table.insert(orbs, randomOrbs)
-    elseif randomOrbs.type >31 and randomOrbs.type <40 then
+    elseif randomOrbs.type == 3 then
       randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/redBall.png')
       table.insert(orbs, randomOrbs)
     end
           
-          
 end
-        
+
+function ballCollision()
+  
+		for ia, va in ipairs(orbs) do
+			if va.x + 8 > starship.x and
+        va.x < starship.x + 70 and
+        va.y + 8 > starship.y and
+        va.y < starship.y + 70 then
+          
+          table.remove(orbs, ia)
+      end
+	end
+end 
