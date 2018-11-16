@@ -12,6 +12,8 @@ enemies = {}
 function love.load()
   
   music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
+  lasershot = love.audio.newSource('/assets/pictures/sound/lasershot.wav','static')
+  enemydestroy = love.audio.newSource('/assets/pictures/sound/enemydestroy.wav','static')
 
 
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
@@ -144,8 +146,10 @@ function love.draw()
     if magicshoot:isPlaying() then return end
     magicshoot:rewind()
     magicshoot:play()
-  end
-  
+    lasershot:play()
+
+end
+  music:setVolume(0.5)
    music:play()
    
 end
@@ -174,6 +178,8 @@ function bulletCollision()
         va.y + 4 > v.y and
         va.y < v.y + 30 then
           
+      enemydestroy:play()
+      
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.magics, ia)
@@ -184,7 +190,9 @@ function bulletCollision()
         va.x < v.x + 30 and
         va.y + 4 > v.y and
         va.y < v.y + 30 then
-          
+      
+      enemydestroy:play()
+      
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.attacks, ia)
