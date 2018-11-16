@@ -11,7 +11,7 @@ enemies = {}
 
 function love.load()
   
-  music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
+  music = love.audio.newSource('/assets/sounds/backgroundmusic.ogg','static')
 
 
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
