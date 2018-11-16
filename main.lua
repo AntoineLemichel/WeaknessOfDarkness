@@ -8,12 +8,19 @@ orbs = {}
  starship.speed = 300
  starship.magics = {}
  starship.attacks = {}
- 
+ starship.physics = 400
+ starship.magic = 125
+ starship.armor = 350
+ starship.agility = 500
+ starship.life = 100
  score = 0
 
 function love.load()
   
-  music = love.audio.newSource('/assets/sounds/backgroundmusic.ogg','static')
+  music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
+  lasershot = love.audio.newSource('/assets/pictures/sound/lasershot.wav','static')
+  attackshot = love.audio.newSource('/assets/pictures/sound/attackshot.wav','static')
+  enemydestroy = love.audio.newSource('/assets/pictures/sound/enemydestroy.wav','static')
 
 
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
@@ -105,10 +112,10 @@ function love.update(dt)
   end
  
   if starship.y <= -31 then
-    starship.y = 550
+    starship.y = 420
   end
   
-  if starship.y >= 555 then
+  if starship.y >= 440 then
     starship.y = -30
   end
   
@@ -122,9 +129,9 @@ function love.draw()
       love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
     end
   end
-
+  
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
-
+  
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
   end
@@ -140,8 +147,22 @@ function love.draw()
   
   for i,v in ipairs(starship.attacks) do
     love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
+    attackshot:play()
   end
-  
+
+  love.graphics.setColor(0, 0, 0, 1)
+  love.graphics.rectangle('fill', 0, 480, love.graphics.getWidth(), 200)
+
+  love.graphics.setColor(246, 255, 255, 0.5)
+  love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
+  love.graphics.setColor(246, 255, 0, 0.5)
+  love.graphics.rectangle('fill', 10, 550, starship.armor, 20)
+  love.graphics.setColor(255, 0, 0, 0.5)
+  love.graphics.rectangle('fill', 10, 530, starship.physics, 20)
+  love.graphics.setColor(0,255,0,0.5)
+  love.graphics.rectangle('fill', 10, 510, starship.agility, 20)
+  love.graphics.setColor(0,0,255,0.5)
+  love.graphics.rectangle('fill', 10, 490, starship.magic, 20)
   love.graphics.setColor(255, 255, 255)
 	love.graphics.print("score: "..tostring(score), 10, 10)
   
@@ -151,11 +172,11 @@ function love.draw()
   end
   for i,v in ipairs(starship.magics) do
     if magicshoot:isPlaying() then return end
-    magicshoot:rewind()
-    magicshoot:play()
-  end
-  
-   music:play()
+    lasershot:play()
+
+end
+  music:setVolume(0.5)
+  music:play()
    
 end
 
@@ -170,6 +191,7 @@ function enemySpawn ()
   cooldown3 = 1
   enemy = {}
   enemy.x = 900
+
   enemy.y = math.random(550, 0)
   enemy.type = love.math.random(0, 1)
   enemy.enemyShot = {}
@@ -183,6 +205,8 @@ function enemySpawn ()
     enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
   end
   --table.insert(enemies.shot, enemyShot)
+
+  enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
   table.insert(enemies, enemy)
 end
 
