@@ -54,7 +54,7 @@ function love.update(dt)
   end
 
   for i,v in ipairs(enemies) do 
-    v.x = v.x - 200 * dt
+    v.x = v.x - 100 * dt
 
     if v.x <= - 2 then
       table.remove(enemies, i)
@@ -62,7 +62,7 @@ function love.update(dt)
   end
   
   for i,v in ipairs(orbs) do
-    v.x = v.x - 50 * dt
+    v.x = v.x - 200 * dt
     
     if v.x <= -2 then
       table.remove(orbs, i)
