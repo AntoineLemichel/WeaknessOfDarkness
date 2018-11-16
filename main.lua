@@ -31,6 +31,9 @@ function love.load()
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
+
+  fullscreenWidth = love.graphics.getWidth()
+  fullscreenHeight = love.graphics.getHeight()
   
 end
 
@@ -42,7 +45,7 @@ function love.update(dt)
   for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
     
-    if v.x >= 775 then
+    if v.x >= fullscreenWidth then
       table.remove(starship.magics, i)
     end
   end
@@ -58,7 +61,7 @@ function love.update(dt)
   for i,v in ipairs(starship.attacks) do
     v.x = v.x + 1000 * dt
     
-    if v.x >=775 then
+    if v.x >= fullscreenWidth then
       table.remove(starship.attacks, i)
     end
   end
@@ -75,6 +78,9 @@ function love.update(dt)
 
   if love.keyboard.isDown("down") then
     starship.y = starship.y + starship.speed * dt
+  end
+  if love.keyboard.isDown('escape') then
+    love.event.quit()
   end
   
   cooldown = math.max(cooldown - dt,0)
@@ -112,10 +118,10 @@ function love.update(dt)
   end
  
   if starship.y <= -31 then
-    starship.y = 420
+    starship.y = fullscreenHeight - 200
   end
   
-  if starship.y >= 440 then
+  if starship.y >= fullscreenHeight - 160 then
     starship.y = -30
   end
   
@@ -142,18 +148,18 @@ function love.draw()
   end
 
   love.graphics.setColor(0, 0, 0, 1)
-  love.graphics.rectangle('fill', 0, 480, love.graphics.getWidth(), 200)
+  love.graphics.rectangle('fill', 0, (fullscreenHeight - 130), love.graphics.getWidth(), 130)
 
   love.graphics.setColor(246, 255, 255, 0.5)
   love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
   love.graphics.setColor(246, 255, 0, 0.5)
-  love.graphics.rectangle('fill', 10, 550, starship.armor, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 30, starship.armor, 20)
   love.graphics.setColor(255, 0, 0, 0.5)
-  love.graphics.rectangle('fill', 10, 530, starship.physics, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 50, starship.physics, 20)
   love.graphics.setColor(0,255,0,0.5)
-  love.graphics.rectangle('fill', 10, 510, starship.agility, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 70, starship.agility, 20)
   love.graphics.setColor(0,0,255,0.5)
-  love.graphics.rectangle('fill', 10, 490, starship.magic, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magic, 20)
   love.graphics.setColor(255, 255, 255)
 	love.graphics.print("score: "..tostring(score), 10, 10)
   
@@ -181,8 +187,8 @@ end
 function enemySpawn ()
   cooldown3 = 1
   enemy = {}
-  enemy.x = 900
-  enemy.y = math.random(450, 0)
+  enemy.x = fullscreenWidth
+  enemy.y = math.random(fullscreenHeight - 170, 0)
   enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
   table.insert(enemies, enemy)
 end
