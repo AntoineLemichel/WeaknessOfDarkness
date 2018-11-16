@@ -7,10 +7,10 @@ orbs = {}
  starship.speed = 300
  starship.magics = {}
  starship.attacks = {}
- starship.attackPower = 400
- starship.magicPower = 125
- starship.armor = 350
- starship.agility = 500
+ starship.physics = 240
+ starship.magic = 240
+ starship.armor = 240
+ starship.agility = 240
  starship.life = 100
  score = 0
 
@@ -149,7 +149,7 @@ function love.update(dt)
   if starship.y >= fullscreenHeight - 160 then
     starship.y = -30
   end
--- 
+--
 end
 
 
@@ -180,7 +180,7 @@ function love.draw()
   for i,v in ipairs(orbs) do
     love.graphics.draw(v.image, v.x, v.y, 0, 0.2, 0.2)
   end
--- 
+--
 
 -- Draw all HUD (player's life, armor, physics, agility and magic)
   love.graphics.setColor(0, 0, 0, 1)
@@ -188,17 +188,22 @@ function love.draw()
   love.graphics.setColor(246, 255, 255, 0.5)
   love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
   love.graphics.setColor(246, 255, 0, 0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 30, starship.armor, 20)
+  love.graphics.rectangle('fill', 100, fullscreenHeight - 30, starship.armor, 10)
   love.graphics.setColor(255, 0, 0, 0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 50, starship.attackPower, 20)
+  love.graphics.rectangle('fill', 100, fullscreenHeight - 50, starship.physics, 10)
   love.graphics.setColor(0,255,0,0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 70, starship.agility, 20)
+  love.graphics.rectangle('fill', 100, fullscreenHeight - 70, starship.agility, 10)
   love.graphics.setColor(0,0,255,0.5)
-  love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magicPower, 20)
+  love.graphics.rectangle('fill', 100, fullscreenHeight - 90, starship.magic, 10)
+  love.graphics.setColor(255, 255, 255, 1)
+  love.graphics.printf("Armor :", 20, fullscreenHeight - 33, 100, "left")
+  love.graphics.printf("Strength :", 20, fullscreenHeight - 53, 100, "left")
+  love.graphics.printf("Agility :", 20, fullscreenHeight - 73, 100, "left")
+  love.graphics.printf("Magic :", 20, fullscreenHeight - 93, 100, "left")
 
 
   love.graphics.setColor(255, 255, 255)
-	love.graphics.print("score: "..tostring(score), 10, 10) -- Setup scrore
+	love.graphics.print("score: "..tostring(score), 30, fullscreenHeight - 120) -- Setup scrore
 -- 
 
 
@@ -292,7 +297,7 @@ end
 function spawnOrbs(x,y)
 -- This function, manage spawn Orbs with random type (Physics, magics, armor or agility) 
     randomOrbs = {}
-    randomOrbs.type = love.math.random(0, 30)
+    randomOrbs.type = love.math.random(0, 3)
     randomOrbs.x = x
     randomOrbs.y = y
     
@@ -318,7 +323,21 @@ function ballCollision()
       va.x < starship.x + 70 and
       va.y + 8 > starship.y and
       va.y < starship.y + 70 then
-        
+      -- Add statistics
+      if va.type == 0 and starship.magic <= 240 and starship.physics > 0 then
+          starship.magic = starship.magic + 10
+          starship.physics = starship.physics - 5
+      elseif va.type == 1 and starship.agility <= 240 and starship.armor > 0 then
+          starship.agility = starship.agility + 10
+          starship.armor = starship.armor - 5
+      elseif va.type == 2 and starship.armor <= 240 and starship.agility > 0 then
+          starship.armor = starship.armor + 10
+          starship.agility = starship.agility - 5
+      elseif va.type == 3 and starship.physics <= 240 and starship.magic > 0 then
+          starship.physics = starship.physics + 10
+          starship.magic = starship.magic - 5
+      end
+      --
       table.remove(orbs, ia)
     end
 	end
