@@ -1,4 +1,5 @@
 enemies = {}
+orbs = {}
  
  starship = {}
  starship.x = 0
@@ -10,6 +11,8 @@ enemies = {}
  score = 0
 
 function love.load()
+  
+  love.window.setTitle("Weakness of Darkness")
   
   music = love.audio.newSource('/assets/pictures/sound/backgroundmusic.ogg','static')
 
@@ -24,6 +27,11 @@ function love.load()
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
+  
+  magicOrbs = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
+  agilityOrbs = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
+  strengthOrbs = love.graphics.newImage('/assets/pictures/balls/redBall.png')
+  armorOrbs = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
   
 end
 
@@ -41,7 +49,7 @@ function love.update(dt)
   end
 
   for i,v in ipairs(enemies) do 
-    v.x = v.x - 100 * dt
+    v.x = v.x - 200 * dt
 
     if v.x <= - 2 then
       table.remove(enemies, i)
@@ -129,6 +137,10 @@ function love.draw()
     love.graphics.draw(enemyImage, v.x, v.y, 0, 0.6, 0.6)
   end
   
+  for i,v  in ipairs(orbs) do
+    love.graphics.draw(v.image, v.x, v.y, 0, 0.2, 0.2)
+  end
+  
   for i,v in ipairs(starship.attacks) do
     love.graphics.draw(v.attackshoot, v.x, v.y, 0, 0.3, 0.3)
   end
@@ -173,7 +185,7 @@ function bulletCollision()
         va.x < v.x + 30 and
         va.y + 4 > v.y and
         va.y < v.y + 30 then
-          
+          spawnOrbs(enemies[i].x, enemies[i].y)
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.magics, ia)
@@ -184,7 +196,7 @@ function bulletCollision()
         va.x < v.x + 30 and
         va.y + 4 > v.y and
         va.y < v.y + 30 then
-          
+          spawnOrbs(enemies[i].x, enemies[i].y)
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.attacks, ia)
@@ -192,3 +204,37 @@ function bulletCollision()
 		end
 	end
 end
+
+
+function spawnOrbs(x, y)
+  randomOrbs = love.math.random(0, 100)
+          if randomOrbs > 2 and randomOrbs < 10 then
+              magicOrbs = {}
+              magicOrbs.x = x
+              magicOrbs.y = y
+              magicOrbs.image = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
+              table.insert(orbs, magicOrbs)
+          end
+          if randomOrbs > 11 and randomOrbs < 20 then
+              armorOrbs = {}
+              armorOrbs.x = x
+              armorOrbs.y = y
+              armorOrbs.image = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
+              table.insert(orbs, armorOrbs)
+          end
+          if randomOrbs > 21 and randomOrbs < 30 then
+              agilityOrbs = {}
+              agilityOrbs.x = x
+              agilityOrbs.y = y
+              agilityOrbs.image = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
+              table.insert(orbs, agilityOrbs)
+          end
+          if randomOrbs > 31 and randomOrbs < 40 then
+              strengthOrbs = {}
+              strengthOrbs.x = x
+              strengthOrbs.y = y
+              strengthOrbs.image = love.graphics.newImage('/assets/pictures/balls/redBall.png')
+              table.insert(orbs, strengthOrbs)
+          end
+end
+        
