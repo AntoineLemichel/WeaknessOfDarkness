@@ -1,4 +1,5 @@
 enemies = {}
+enemies.shot = {}
 orbs = {}
  
  starship = {}
@@ -29,14 +30,13 @@ function love.load()
   magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
   attackshoot = love.graphics.newImage('/assets/pictures/ship/shotatt3.png')
   enemyImage = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
+  enemyImage2 = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
-  
-  magicOrbs = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
-  agilityOrbs = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
-  strengthOrbs = love.graphics.newImage('/assets/pictures/balls/redBall.png')
-  armorOrbs = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
+
+  fullscreenWidth = love.graphics.getWidth()
+  fullscreenHeight = love.graphics.getHeight()
   
 end
 
@@ -48,7 +48,7 @@ function love.update(dt)
   for i,v in ipairs(starship.magics) do
     v.x = v.x + 700 * dt
     
-    if v.x >= 775 then
+    if v.x >= fullscreenWidth then
       table.remove(starship.magics, i)
     end
   end
@@ -61,19 +61,15 @@ function love.update(dt)
     end
   end
   
+  
   for i,v in ipairs(starship.attacks) do
     v.x = v.x + 1000 * dt
     
-    if v.x >=775 then
+    if v.x >= fullscreenWidth then
       table.remove(starship.attacks, i)
     end
   end
   
-  for i,v in ipairs(enemies) do
-    if v.x <= -2 then
-      table.remove(enemies, i)
-    end
-  end
   
   if love.keyboard.isDown("up") then
     starship.y = starship.y - starship.speed * dt
@@ -81,6 +77,9 @@ function love.update(dt)
 
   if love.keyboard.isDown("down") then
     starship.y = starship.y + starship.speed * dt
+  end
+  if love.keyboard.isDown('escape') then
+    love.event.quit()
   end
   
   cooldown = math.max(cooldown - dt,0)
@@ -118,10 +117,10 @@ function love.update(dt)
   end
  
   if starship.y <= -31 then
-    starship.y = 420
+    starship.y = fullscreenHeight - 200
   end
   
-  if starship.y >= 440 then
+  if starship.y >= fullscreenHeight - 160 then
     starship.y = -30
   end
   
@@ -139,7 +138,15 @@ function love.draw()
   love.graphics.draw(starship.image, starship.x, starship.y, 0, 0.2, 0.2)
   
   for i,v  in ipairs(enemies) do 
-    love.graphics.draw(enemyImage, v.x, v.y, 0, 0.6, 0.6)
+    love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
+  end
+  
+  for i,v  in ipairs(enemies.shot) do 
+    love.graphics.draw(v.enemyShot.image, v.x, v.y, 0, 0.6, 0.6)
+  end
+  
+  for i,v in ipairs(orbs) do
+    love.graphics.draw(v.image, v.x, v.y, 0, 0.2, 0.2)
   end
   
   for i,v  in ipairs(orbs) do
@@ -152,18 +159,18 @@ function love.draw()
   end
 
   love.graphics.setColor(0, 0, 0, 1)
-  love.graphics.rectangle('fill', 0, 480, love.graphics.getWidth(), 200)
+  love.graphics.rectangle('fill', 0, (fullscreenHeight - 130), love.graphics.getWidth(), 130)
 
   love.graphics.setColor(246, 255, 255, 0.5)
   love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
   love.graphics.setColor(246, 255, 0, 0.5)
-  love.graphics.rectangle('fill', 10, 550, starship.armor, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 30, starship.armor, 20)
   love.graphics.setColor(255, 0, 0, 0.5)
-  love.graphics.rectangle('fill', 10, 530, starship.physics, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 50, starship.physics, 20)
   love.graphics.setColor(0,255,0,0.5)
-  love.graphics.rectangle('fill', 10, 510, starship.agility, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 70, starship.agility, 20)
   love.graphics.setColor(0,0,255,0.5)
-  love.graphics.rectangle('fill', 10, 490, starship.magic, 20)
+  love.graphics.rectangle('fill', 10, fullscreenHeight - 90, starship.magic, 20)
   love.graphics.setColor(255, 255, 255)
 	love.graphics.print("score: "..tostring(score), 10, 10)
   
@@ -191,33 +198,50 @@ end
 function enemySpawn ()
   cooldown3 = 1
   enemy = {}
-  enemy.x = 900
-  enemy.y = math.random(450, 0)
+
+  enemy.x = fullscreenWidth
+  enemy.y = math.random(fullscreenHeight - 170, 0)
+  enemy.type = love.math.random(0, 1)
+  enemy.enemyShot = {}
+  enemy.enemyShot.x = enemy.x
+  enemy.enemyShot.y = enemy.y
+  if enemy.type == 0 then
+    enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
+    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
+  elseif enemy.type == 1 then
+    enemy.image = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
+    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
+  end
+  --table.insert(enemies.shot, enemyShot)
   enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
   table.insert(enemies, enemy)
 end
 
 function bulletCollision()
 	for i,v in ipairs(enemies) do
+    
+          
 		for ia, va in ipairs(starship.magics) do
 			if va.x + 4 > v.x and
         va.x < v.x + 30 and
         va.y + 4 > v.y and
         va.y < v.y + 30 then
-          spawnOrbs(enemies[i].x, enemies[i].y)    
-          enemydestroy:play()
+          
+          spawnOrbs(enemies[i].x, enemies[i].y)
+          
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.magics, ia)
-			end
+      end
 		end
     for ia, va in ipairs(starship.attacks) do
 			if va.x + 4 > v.x and
         va.x < v.x + 30 and
         va.y + 4 > v.y and
         va.y < v.y + 30 then
+          
           spawnOrbs(enemies[i].x, enemies[i].y)
-          enemydestroy:play()
+          
           score = score + 50
           table.remove(enemies, i)
           table.remove(starship.attacks, ia)
@@ -226,36 +250,27 @@ function bulletCollision()
 	end
 end
 
-
-function spawnOrbs(x, y)
-  randomOrbs = love.math.random(0, 100)
-          if randomOrbs > 2 and randomOrbs < 10 then
-              magicOrbs = {}
-              magicOrbs.x = x
-              magicOrbs.y = y
-              magicOrbs.image = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
-              table.insert(orbs, magicOrbs)
-          end
-          if randomOrbs > 11 and randomOrbs < 20 then
-              armorOrbs = {}
-              armorOrbs.x = x
-              armorOrbs.y = y
-              armorOrbs.image = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
-              table.insert(orbs, armorOrbs)
-          end
-          if randomOrbs > 21 and randomOrbs < 30 then
-              agilityOrbs = {}
-              agilityOrbs.x = x
-              agilityOrbs.y = y
-              agilityOrbs.image = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
-              table.insert(orbs, agilityOrbs)
-          end
-          if randomOrbs > 31 and randomOrbs < 40 then
-              strengthOrbs = {}
-              strengthOrbs.x = x
-              strengthOrbs.y = y
-              strengthOrbs.image = love.graphics.newImage('/assets/pictures/balls/redBall.png')
-              table.insert(orbs, strengthOrbs)
-          end
+function spawnOrbs(x,y)
+      
+    randomOrbs = {}
+    randomOrbs.type = love.math.random(0, 100)
+    randomOrbs.x = x
+    randomOrbs.y = y
+    
+    if randomOrbs.type >2 and randomOrbs.type <10 then
+      randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
+      table.insert(orbs, randomOrbs)
+    elseif randomOrbs.type >11 and randomOrbs.type <20 then
+      randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
+      table.insert(orbs, randomOrbs)
+    elseif randomOrbs.type >21 and randomOrbs.type <30 then
+      randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
+      table.insert(orbs, randomOrbs)
+    elseif randomOrbs.type >31 and randomOrbs.type <40 then
+      randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/redBall.png')
+      table.insert(orbs, randomOrbs)
+    end
+          
+          
 end
         
