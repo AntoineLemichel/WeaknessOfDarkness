@@ -246,20 +246,20 @@ end
 function spawnOrbs(x,y)
       
     randomOrbs = {}
-    randomOrbs.type = love.math.random(0, 100)
+    randomOrbs.type = love.math.random(0, 30)
     randomOrbs.x = x
     randomOrbs.y = y
     
-          if randomOrbs.type >2 and randomOrbs.type <10 then
+          if randomOrbs.type == 0 then
             randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/blueBall.png')
             table.insert(orbs, randomOrbs)
-          elseif randomOrbs.type >11 and randomOrbs.type <20 then
+          elseif randomOrbs.type == 1 then
             randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/greenBall.png')
             table.insert(orbs, randomOrbs)
-          elseif randomOrbs.type >21 and randomOrbs.type <30 then
+          elseif randomOrbs.type == 2 then
             randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/yellowBall.png')
             table.insert(orbs, randomOrbs)
-          elseif randomOrbs.type >31 and randomOrbs.type <40 then
+          elseif randomOrbs.type == 3 then
             randomOrbs.image = love.graphics.newImage('/assets/pictures/balls/redBall.png')
             table.insert(orbs, randomOrbs)
           end
