@@ -35,6 +35,8 @@ function love.load()
   cooldown3 = 0
   cooldownShootEnemy = 0
 
+paused = false
+
   fullscreenWidth = love.graphics.getWidth()
   fullscreenHeight = love.graphics.getHeight()
   
@@ -42,6 +44,9 @@ end
 
 
 function love.update(dt)
+  
+  if not paused then 
+    
   backgroundVideo()
   bulletCollision()
   ballCollision()
@@ -279,6 +284,7 @@ end
   music:setVolume(0.5) -- Setup volume for background music
   music:play() -- Launch background music
    
+   end
 end
 
 function backgroundVideo()
