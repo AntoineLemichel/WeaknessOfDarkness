@@ -1,4 +1,5 @@
 enemies = {}
+enemies.shoot = {}
 orbs = {}
  
  starship = {}
@@ -7,10 +8,10 @@ orbs = {}
  starship.speed = 300
  starship.magics = {}
  starship.attacks = {}
- starship.physics = 240
- starship.magic = 240
- starship.armor = 240
- starship.agility = 240
+ starship.physics = 50
+ starship.magic = 50
+ starship.armor = 50
+ starship.agility = 50
  starship.life = 100
  score = 0
 
@@ -32,6 +33,7 @@ function love.load()
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
+  cooldownShootEnemy = 0
 
   fullscreenWidth = love.graphics.getWidth()
   fullscreenHeight = love.graphics.getHeight()
@@ -43,7 +45,7 @@ function love.update(dt)
   backgroundVideo()
   bulletCollision()
   ballCollision()
-
+  checkShootCollision()
 
   -- Setup bullet magics speed and check collision with world bounds
 
@@ -60,12 +62,29 @@ function love.update(dt)
 
   for i,v in ipairs(enemies) do 
     v.x = v.x - 100 * dt
-
+    
+    cooldownShootEnemy = math.max(cooldownShootEnemy - dt,0)
+    if v.x < fullscreenWidth and cooldownShootEnemy == 0 then
+      cooldownShootEnemy = 1.2
+      enemyShot = {}
+      enemyShot.x = v.x
+      enemyShot.y = v.y + 15
+      
+      if v.type == 0 then
+        enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
+      elseif v.type == 1 then
+        enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
+      end
+    
+      table.insert(enemies.shoot, enemyShot)
+    end
+    
     if v.x <= - 2 then
       table.remove(enemies, i)
     end
   end
 
+  
   -- 
   -- Setup speed Orbs and check collision with world bounds
 
@@ -98,7 +117,14 @@ function love.update(dt)
   if love.keyboard.isDown("down") then
     starship.y = starship.y + starship.speed * dt
   end
--- 
+--
+  if love.keyboard.isDown("left") and score > 1000 then
+    starship.x = starship.x - starship.speed * dt
+  end
+
+  if love.keyboard.isDown("right") and score > 1000 then
+    starship.x = starship.x + starship.speed * dt
+  end
 
 -- Setup quit game if escape is pressed
   if love.keyboard.isDown('escape') then
@@ -141,6 +167,14 @@ function love.update(dt)
   end
 -- 
 
+  for i,v in ipairs(enemies.shoot) do
+    v.x = v.x - 250 * dt
+    
+    if v.x <= -2 then
+      table.remove(enemies.shoot, i)
+    end
+  end
+
 --  If player touch height screen world
   
   if starship.y <= -31 then
@@ -167,14 +201,15 @@ function love.draw()
   -- Draw all of enemies in array
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
-    
     -- Draw all of enemies's shoot in array
-    for ia,va  in ipairs(enemy.shot) do 
-      love.graphics.draw(va.image, va.x, va.y, 0, 0.6, 0.6)
+    for ia,va  in ipairs(enemies.shoot) do 
+      love.graphics.draw(va.image, va.x, va.y, 0, 0.4, 0.4)
     end
+    
 -- 
   end
 -- 
+
 
 -- Draw all Orbs (strenght, agility, magics and armor) in array
   for i,v in ipairs(orbs) do
@@ -215,7 +250,7 @@ function love.draw()
   end
 
 -- 
--- Draw all starhsip's magics shoot
+-- Draw all starship's magics shoot
   for i,v in ipairs(starship.magics) do
     love.graphics.draw(v.magicshoot, v.x, v.y, 0, 0.03, 0.03)
     v.magicshoot:play()
@@ -245,24 +280,20 @@ function enemySpawn ()
 -- This function, manage spawn ennemies and random type (physics or magics)
   cooldown3 = 1
   enemy = {}
-enemy.shot = {}
-
+  
   enemy.x = fullscreenWidth
   enemy.y = math.random(fullscreenHeight - 170, 0)
   enemy.type = love.math.random(0, 1)
-  enemyShot = {}
-  enemyShot.x = enemy.x
-  enemyShot.y = enemy.y
+
   if enemy.type == 0 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
-    enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
   elseif enemy.type == 1 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
-    enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
   end
-  table.insert(enemy.shot, enemyShot)
   table.insert(enemies, enemy)
 end
+
+
 
 function bulletCollision()
 -- This function, manage collision with another object (enemies, orbs) 
@@ -294,10 +325,23 @@ function bulletCollision()
 	end
 end
 
+function checkShootCollision()
+		for ia, va in ipairs(enemies.shoot) do
+			if va.x + 4 > starship.x and
+        va.x < starship.x + 55 and
+        va.y + 4 > starship.y and
+        va.y < starship.y + 70 then
+          
+          starship.life = starship.life - 10
+          table.remove(enemies.shoot, ia)
+      end
+	end
+end
+
 function spawnOrbs(x,y)
 -- This function, manage spawn Orbs with random type (Physics, magics, armor or agility) 
     randomOrbs = {}
-    randomOrbs.type = love.math.random(0, 3)
+    randomOrbs.type = love.math.random(0, 30)
     randomOrbs.x = x
     randomOrbs.y = y
     
@@ -324,18 +368,38 @@ function ballCollision()
       va.y + 8 > starship.y and
       va.y < starship.y + 70 then
       -- Add statistics
-      if va.type == 0 and starship.magic <= 240 and starship.physics > 0 then
+      if va.type == 0 and starship.physics > 0 then
+        starship.physics = starship.physics - 5
+        if starship.magic < 250 then
           starship.magic = starship.magic + 10
-          starship.physics = starship.physics - 5
-      elseif va.type == 1 and starship.agility <= 240 and starship.armor > 0 then
+          if starship.magic > 250 then
+            starship.magic = 250
+          end
+        end
+      elseif va.type == 1 and starship.armor > 0 then
+        starship.armor = starship.armor - 5
+        if starship.agility < 250 then
           starship.agility = starship.agility + 10
-          starship.armor = starship.armor - 5
-      elseif va.type == 2 and starship.armor <= 240 and starship.agility > 0 then
+          if starship.agility > 250 then
+            starship.agility = 250
+          end
+        end
+      elseif va.type == 2 and starship.agility > 0 then
+        starship.agility = starship.agility - 5
+        if starship.armor < 250 then
           starship.armor = starship.armor + 10
-          starship.agility = starship.agility - 5
+          if starship.armor > 250 then
+            starship.armor = 250
+          end
+        end
       elseif va.type == 3 and starship.physics <= 240 and starship.magic > 0 then
+        starship.magic = starship.magic - 5
+        if starship.physics < 250 then
           starship.physics = starship.physics + 10
-          starship.magic = starship.magic - 5
+          if starship.physics > 250 then
+            starship.physics = 250
+          end
+        end
       end
       --
       table.remove(orbs, ia)
