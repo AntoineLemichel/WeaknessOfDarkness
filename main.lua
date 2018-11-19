@@ -1,5 +1,5 @@
 enemies = {}
-enemies.shot = {}
+enemies.shoot = {}
 orbs = {}
  
  starship = {}
@@ -33,6 +33,7 @@ function love.load()
   cooldown = 0
   cooldown2 = 0
   cooldown3 = 0
+  cooldownShootEnemy = 0
 
   fullscreenWidth = love.graphics.getWidth()
   fullscreenHeight = love.graphics.getHeight()
@@ -44,7 +45,7 @@ function love.update(dt)
   backgroundVideo()
   bulletCollision()
   ballCollision()
-
+  checkShootCollision()
 
   -- Setup bullet magics speed and check collision with world bounds
 
@@ -61,12 +62,29 @@ function love.update(dt)
 
   for i,v in ipairs(enemies) do 
     v.x = v.x - 100 * dt
-
+    
+    cooldownShootEnemy = math.max(cooldownShootEnemy - dt,0)
+    if v.x < fullscreenWidth and cooldownShootEnemy == 0 then
+      cooldownShootEnemy = 1.2
+      enemyShot = {}
+      enemyShot.x = v.x
+      enemyShot.y = v.y + 15
+      
+      if v.type == 0 then
+        enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
+      elseif v.type == 1 then
+        enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
+      end
+    
+      table.insert(enemies.shoot, enemyShot)
+    end
+    
     if v.x <= - 2 then
       table.remove(enemies, i)
     end
   end
 
+  
   -- 
   -- Setup speed Orbs and check collision with world bounds
 
@@ -149,6 +167,14 @@ function love.update(dt)
   end
 -- 
 
+  for i,v in ipairs(enemies.shoot) do
+    v.x = v.x - 250 * dt
+    
+    if v.x <= -2 then
+      table.remove(enemies.shoot, i)
+    end
+  end
+
 --  If player touch height screen world
   
   if starship.y <= -31 then
@@ -175,14 +201,15 @@ function love.draw()
   -- Draw all of enemies in array
   for i,v  in ipairs(enemies) do 
     love.graphics.draw(v.image, v.x, v.y, 0, 0.6, 0.6)
+    -- Draw all of enemies's shoot in array
+    for ia,va  in ipairs(enemies.shoot) do 
+      love.graphics.draw(va.image, va.x, va.y, 0, 0.4, 0.4)
+    end
+    
+-- 
   end
 -- 
 
--- Draw all of enemies's shoot in array
-  for i,v  in ipairs(enemies.shot) do 
-    love.graphics.draw(v.enemyShot.image, v.x, v.y, 0, 0.6, 0.6)
-  end
--- 
 
 -- Draw all Orbs (strenght, agility, magics and armor) in array
   for i,v in ipairs(orbs) do
@@ -203,7 +230,6 @@ function love.draw()
   love.graphics.rectangle('fill', 100, fullscreenHeight - 70, starship.agility, 10)
   love.graphics.setColor(0,0,255,0.5)
   love.graphics.rectangle('fill', 100, fullscreenHeight - 90, starship.magic, 10)
-  
   love.graphics.setColor(255, 255, 255, 1)
   love.graphics.printf("Armor :", 20, fullscreenHeight - 33, 100, "left")
   love.graphics.printf("Strength :", 20, fullscreenHeight - 53, 100, "left")
@@ -254,23 +280,20 @@ function enemySpawn ()
 -- This function, manage spawn ennemies and random type (physics or magics)
   cooldown3 = 1
   enemy = {}
-
+  
   enemy.x = fullscreenWidth
   enemy.y = math.random(fullscreenHeight - 170, 0)
   enemy.type = love.math.random(0, 1)
-  enemy.enemyShot = {}
-  enemy.enemyShot.x = enemy.x
-  enemy.enemyShot.y = enemy.y
+
   if enemy.type == 0 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemyattack.png')
-    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotattack.png')
   elseif enemy.type == 1 then
     enemy.image = love.graphics.newImage('/assets/pictures/ship/enemymagic.png')
-    enemy.enemyShot.image = love.graphics.newImage('/assets/pictures/ship/enemyshotmagic.png')
   end
-  --table.insert(enemies.shot, enemyShot)
   table.insert(enemies, enemy)
 end
+
+
 
 function bulletCollision()
 -- This function, manage collision with another object (enemies, orbs) 
@@ -299,6 +322,19 @@ function bulletCollision()
           table.remove(starship.attacks, ia)
 			end
 		end
+	end
+end
+
+function checkShootCollision()
+		for ia, va in ipairs(enemies.shoot) do
+			if va.x + 4 > starship.x and
+        va.x < starship.x + 55 and
+        va.y + 4 > starship.y and
+        va.y < starship.y + 70 then
+          
+          starship.life = starship.life - 10
+          table.remove(enemies.shoot, ia)
+      end
 	end
 end
 
