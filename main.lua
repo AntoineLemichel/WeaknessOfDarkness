@@ -61,12 +61,22 @@ function love.update(dt)
 
   for i,v in ipairs(enemies) do 
     v.x = v.x - 100 * dt
+    if score > 1000 and score < 2000 then
+      v.x = v.x - 200 * dt
+    end
+    
+    if score > 2000 and score < 3000 then
+      v.x = v.x - 400 * dt
+    end
+    if score > 3000 then
+      v.x = v.x - 800 * dt
+    end
 
     if v.x <= - 2 then
       table.remove(enemies, i)
     end
   end
-
+score = score + 1
   -- 
   -- Setup speed Orbs and check collision with world bounds
 
