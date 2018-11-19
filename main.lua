@@ -62,6 +62,17 @@ function love.update(dt)
 
   for i,v in ipairs(enemies) do 
     v.x = v.x - 100 * dt
+    if score > 1000 and score < 2000 then
+      v.x = v.x - 200 * dt
+    end
+    
+    if score > 2000 and score < 3000 then
+      v.x = v.x - 400 * dt
+    end
+    if score > 3000 then
+      v.x = v.x - 800 * dt
+    end
+
     
     cooldownShootEnemy = math.max(cooldownShootEnemy - dt,0)
     if v.x < fullscreenWidth and cooldownShootEnemy == 0 then
@@ -83,6 +94,7 @@ function love.update(dt)
       table.remove(enemies, i)
     end
   end
+score = score + 1
 
   
   -- 
