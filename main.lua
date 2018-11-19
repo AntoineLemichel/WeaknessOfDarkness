@@ -13,7 +13,7 @@ orbs = {}
  starship.armor = 50
  starship.agility = 50
  starship.life = 100
- score = 0
+ score = 7000
 
 function love.load()
   
@@ -156,6 +156,13 @@ function love.update(dt)
   end
   if starship.y >= fullscreenHeight - 160 then
     starship.y = -30
+  end
+  
+  if starship.x <= -31 then
+    starship.x = 0
+  end
+  if starship.x >= fullscreenWidth - 30 then
+    starship.x = fullscreenWidth - 50
   end
 --
 end
