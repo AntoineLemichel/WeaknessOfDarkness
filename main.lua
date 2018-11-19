@@ -110,6 +110,37 @@ function love.update(dt)
     end
     
     if v.x <= - 2 then
+      -- Condition for delete stat if player let enemy passed
+      if totalAgilityBall >= totalArmorBall and totalAgilityBall >= totalMagicBall and totalAgilityBall >=         totalPhysicsBall then
+        if totalAgilityBall > 0 then
+          if starship.life > 0 then
+            starship.life = starship.life - 5
+          end
+          totalAgilityBall = totalAgilityBall - 0.5
+        end
+      elseif totalArmorBall >= totalAgilityBall and totalArmorBall >= totalMagicBall and totalArmorBall >=          totalPhysicsBall then
+        if totalArmorBall > 0 then
+          if starship.life > 0 then
+            starship.life = starship.life - 5
+          end
+          totalArmorBall = totalArmorBall - 0.5
+        end
+      elseif totalMagicBall >= totalArmorBall and totalMagicBall >= totalAgilityBall and totalMagicBall >=          totalPhysicsBall then
+        if totalMagicBall > 0 then
+          if starship.life > 0 then
+            starship.life = starship.life - 5
+          end
+          totalMagicBall = totalMagicBall - 0.5
+        end
+      elseif totalPhysicsBall >= totalArmorBall and totalPhysicsBall >= totalMagicBall and totalPhysicsBall >=         totalAgilityBall then
+        if totalPhysicsBall > 0 then
+          if starship.life > 0 then 
+           starship.life = starship.life - 5
+          end
+          totalPhysicsBall = totalPhysicsBall - 0.5
+        end
+      end
+      --
       table.remove(enemies, i)
     end
   end
