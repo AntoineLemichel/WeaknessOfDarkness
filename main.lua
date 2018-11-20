@@ -275,10 +275,13 @@ function love.draw()
 --
 
 -- Draw all HUD (player's life, armor, physics, agility and magic)
+  love.graphics.setColor(255, 255, 255, 1)
+  love.graphics.rectangle('fill', fullscreenWidth / 2, 10, 100, 15)
   love.graphics.setColor(0, 0, 0, 1)
   love.graphics.rectangle('fill', 0, (fullscreenHeight - 130), love.graphics.getWidth(), 130)
-  love.graphics.setColor(246, 255, 255, 0.5)
-  love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
+  love.graphics.printf("Vie: "..tostring(starship.life),fullscreenWidth / 2, 10, 100 ,"center")
+  love.graphics.setColor(255, 45, 0, 0.5)
+  love.graphics.rectangle('fill', fullscreenWidth / 2, 10, starship.life, 15)
   love.graphics.setColor(246, 255, 0, 0.5)
   love.graphics.rectangle('fill', 100, fullscreenHeight - 30, starship.armor, 10)
   love.graphics.setColor(255, 0, 0, 0.5)
@@ -294,9 +297,11 @@ function love.draw()
   love.graphics.printf("Magic :", 20, fullscreenHeight - 93, 100, "left")
 
 
-  love.graphics.setColor(255, 255, 255)
-	love.graphics.print("score: "..tostring(score), 30, fullscreenHeight - 120) -- Setup scrore
--- 
+  love.graphics.setColor(255, 255, 255, 1)
+	love.graphics.print("Score: "..tostring(score), 30, fullscreenHeight - 120) -- Setup scrore
+  --love.graphics.setColor(0, 0, 0, 1)
+  
+  
 
 
 -- Draw all starship's physics shoot
@@ -341,7 +346,7 @@ function enemySpawn ()
   enemy = {}
   
   enemy.x = fullscreenWidth
-  enemy.y = math.random(fullscreenHeight - 170, 0)
+  enemy.y = math.random(fullscreenHeight - 170, 50)
   enemy.type = love.math.random(0, 1)
 
   if enemy.type == 0 then
@@ -404,8 +409,8 @@ function checkShootCollision()
             
             if starship.life > 0 then
               starship.life = starship.life - 10
-            --else
-              --gameOver()
+            else
+              GAME_ACTIVE = false
             end
           
             table.remove(enemies.shoot, ia)
@@ -508,4 +513,4 @@ function ballCollision()
       table.remove(orbs, ia)
     end
 	end
-end 
+end
