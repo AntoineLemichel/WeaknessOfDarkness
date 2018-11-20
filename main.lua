@@ -25,9 +25,8 @@ function love.load()
   attackshot = love.audio.newSource('/assets/sounds/attackshot.wav','static')
   enemydestroy = love.audio.newSource('/assets/sounds/enemydestroy.wav','static')
 
-
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
- 
+  background2 = love.graphics.setBackgroundColor( 255, 255, 255 )
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
 
   magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
@@ -40,11 +39,12 @@ function love.load()
 
   fullscreenWidth = love.graphics.getWidth()
   fullscreenHeight = love.graphics.getHeight()
-  paused = false
 end
 
 
 function love.update(dt)
+  
+  if not paused then 
   
   backgroundVideo()
   bulletCollision()
@@ -57,11 +57,19 @@ function love.update(dt)
   starship.armor = totalArmorBall * 10
   starship.agility = totalAgilityBall * 10
   
+  maxStarshipLife = 50 + 10 * totalArmorBall
   starship.speed = 175 + 25 * totalAgilityBall
+  
   -- Setup bullet magics speed and check collision with world bounds
 
   for i,v in ipairs(starship.magics) do
-    v.x = v.x + 700 * dt
+    
+    if totalMagicBall > 15 then
+      v.x = v.x + 1000 * dt
+    else
+      v.x = v.x + 500 * dt
+    end
+    
     
     if v.x >= fullscreenWidth then
       table.remove(starship.magics, i)
@@ -83,6 +91,10 @@ function love.update(dt)
     if score > 3000 then
       v.x = v.x - 800 * dt
     end
+    
+    if starship.life <= 0 then
+      paused = true
+    end 
 
     
     cooldownShootEnemy = math.max(cooldownShootEnemy - dt,0)
@@ -186,7 +198,13 @@ function love.update(dt)
 -- Setup shoot magics if spacebar is down
   cooldown = math.max(cooldown - dt,0)
   if love.keyboard.isDown("space") and cooldown == 0 then
-    cooldown = 0.3
+    
+    if totalMagicBall > 15 then
+      cooldown = 0.15
+    else
+      cooldown = 0.3
+    end
+    
     magic = {}
     magic.x = starship.x + 54
     magic.y = starship.y + 28
@@ -245,6 +263,22 @@ end
 
 
 function love.draw()
+  
+  if paused then 
+      for i = 0, love.graphics.getWidth() / background:getWidth() do
+        for j = 0, love.graphics.getHeight() / background:getHeight() do
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle('fill', 0, fullscreenHeight, 20, love.graphics.getWidth(), 130)
+        --love.graphics.setColor(100, 100, 100, 1)
+        --love.graphics.printf("GAME OVER", 200, 53, 100, "left")
+    end
+    end
+    function love.keypressed(k)
+       if k == 'escape' then
+          love.event.quit()
+    end
+  end
+  end
   -- Draw background with fullscreen
   for i = 0, love.graphics.getWidth() / background:getWidth() do
     for j = 0, love.graphics.getHeight() / background:getHeight() do
@@ -264,9 +298,7 @@ function love.draw()
     end
     
 -- 
-  end
--- 
-
+end
 
 -- Draw all Orbs (strenght, agility, magics and armor) in array
   for i,v in ipairs(orbs) do
@@ -274,29 +306,38 @@ function love.draw()
   end
 --
 
+-- calcul % for draw
+  calculall = maxStarshipLife + starship.life
+  firstcalcul = starship.life / calculall
+  secondcalcul = firstcalcul * 100
+--
+
 -- Draw all HUD (player's life, armor, physics, agility and magic)
   love.graphics.setColor(0, 0, 0, 1)
   love.graphics.rectangle('fill', 0, (fullscreenHeight - 130), love.graphics.getWidth(), 130)
   love.graphics.setColor(246, 255, 255, 0.5)
-  love.graphics.rectangle('fill', starship.x + 10, starship.y - 20, starship.life, 10)
+  love.graphics.circle("fill", 100, fullscreenHeight - 60, 50, 100)
+  love.graphics.setColor(255, 0, 0, 1)
+  love.graphics.circle("fill", 100, fullscreenHeight - 60, secondcalcul, 100)
   love.graphics.setColor(246, 255, 0, 0.5)
-  love.graphics.rectangle('fill', 100, fullscreenHeight - 30, starship.armor, 10)
+  love.graphics.rectangle('fill', 380, fullscreenHeight - 30, starship.armor, 10)
   love.graphics.setColor(255, 0, 0, 0.5)
-  love.graphics.rectangle('fill', 100, fullscreenHeight - 50, starship.physics, 10)
+  love.graphics.rectangle('fill', 380, fullscreenHeight - 50, starship.physics, 10)
   love.graphics.setColor(0,255,0,0.5)
-  love.graphics.rectangle('fill', 100, fullscreenHeight - 70, starship.agility, 10)
+  love.graphics.rectangle('fill', 380, fullscreenHeight - 70, starship.agility, 10)
   love.graphics.setColor(0,0,255,0.5)
-  love.graphics.rectangle('fill', 100, fullscreenHeight - 90, starship.magic, 10)
+  love.graphics.rectangle('fill', 380, fullscreenHeight - 90, starship.magic, 10)
   love.graphics.setColor(255, 255, 255, 1)
-  love.graphics.printf("Armor :", 20, fullscreenHeight - 33, 100, "left")
-  love.graphics.printf("Strength :", 20, fullscreenHeight - 53, 100, "left")
-  love.graphics.printf("Agility :", 20, fullscreenHeight - 73, 100, "left")
-  love.graphics.printf("Magic :", 20, fullscreenHeight - 93, 100, "left")
+  love.graphics.printf("Armor :", 300, fullscreenHeight - 33, 100, "left")
+  love.graphics.printf("Strength :", 300, fullscreenHeight - 53, 100, "left")
+  love.graphics.printf("Agility :", 300, fullscreenHeight - 73, 100, "left")
+  love.graphics.printf("Magic :", 300, fullscreenHeight - 93, 100, "left")
+  love.graphics.printf(tostring(starship.life).. " hp / "..tostring(maxStarshipLife) .. " hp", 50, fullscreenHeight - 68, 100 ,"center")
 
-
-  love.graphics.setColor(255, 255, 255)
-	love.graphics.print("score: "..tostring(score), 30, fullscreenHeight - 120) -- Setup scrore
--- 
+  love.graphics.setColor(255, 255, 255, 1)
+	love.graphics.print("Score: "..tostring(score), 300, fullscreenHeight - 120) -- Setup scrore
+  
+  
 
 
 -- Draw all starship's physics shoot
@@ -324,6 +365,7 @@ function love.draw()
   music:setVolume(0.5) -- Setup volume for background music
   music:play() -- Launch background music
    
+   end
 end
 
 --end of draw
@@ -341,7 +383,7 @@ function enemySpawn ()
   enemy = {}
   
   enemy.x = fullscreenWidth
-  enemy.y = math.random(fullscreenHeight - 170, 0)
+  enemy.y = math.random(fullscreenHeight - 170, 50)
   enemy.type = love.math.random(0, 1)
 
   if enemy.type == 0 then
@@ -377,6 +419,13 @@ function bulletCollision()
         va.y < v.y + 35 and
         v.type == 1 then
           
+          if totalPhysicsBall > 10 then
+            starship.life = starship.life + 2
+            if starship.life > maxStarshipLife then
+              starship.life = maxStarshipLife
+            end
+          end
+          
           spawnOrbs(enemies[i].x, enemies[i].y)
           score = score + 50
           table.remove(enemies, i)
@@ -404,8 +453,9 @@ function checkShootCollision()
             
             if starship.life > 0 then
               starship.life = starship.life - 10
-            --else
-              --gameOver()
+              if starship.life <= 0 then
+                paused = true
+              end           
             end
           
             table.remove(enemies.shoot, ia)
@@ -413,7 +463,7 @@ function checkShootCollision()
           else
             table.remove(enemies.shoot, ia)
           end
-          
+          --
 
       end
 	end
@@ -505,7 +555,7 @@ function ballCollision()
         end
       end
       --
-      table.remove(orbs, ia)
+      table.remove(orbs, ia) 
     end
 	end
-end 
+end
