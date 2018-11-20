@@ -25,9 +25,8 @@ function love.load()
   attackshot = love.audio.newSource('/assets/sounds/attackshot.wav','static')
   enemydestroy = love.audio.newSource('/assets/sounds/enemydestroy.wav','static')
 
-
   background = love.graphics.newVideo('/assets/pictures/background.ogv')
- 
+  background2 = love.graphics.setBackgroundColor( 255, 255, 255 )
   starship.image = love.graphics.newImage('/assets/pictures/ship/starship.png')
 
   magicshoot = love.graphics.newVideo('/assets/pictures/ship/shotmagic.ogv')
@@ -40,11 +39,12 @@ function love.load()
 
   fullscreenWidth = love.graphics.getWidth()
   fullscreenHeight = love.graphics.getHeight()
-  paused = false
 end
 
 
 function love.update(dt)
+  
+  if not paused then 
   
   backgroundVideo()
   bulletCollision()
@@ -259,6 +259,22 @@ end
 
 
 function love.draw()
+  
+  if paused then 
+      for i = 0, love.graphics.getWidth() / background:getWidth() do
+        for j = 0, love.graphics.getHeight() / background:getHeight() do
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.rectangle('fill', 0, fullscreenHeight, 20, love.graphics.getWidth(), 130)
+        --love.graphics.setColor(100, 100, 100, 1)
+        --love.graphics.printf("GAME OVER", 200, 53, 100, "left")
+    end
+    end
+    function love.keypressed(k)
+       if k == 'escape' then
+          love.event.quit()
+    end
+  end
+  end
   -- Draw background with fullscreen
   for i = 0, love.graphics.getWidth() / background:getWidth() do
     for j = 0, love.graphics.getHeight() / background:getHeight() do
@@ -278,9 +294,7 @@ function love.draw()
     end
     
 -- 
-  end
--- 
-
+end
 
 -- Draw all Orbs (strenght, agility, magics and armor) in array
   for i,v in ipairs(orbs) do
@@ -343,6 +357,7 @@ function love.draw()
   music:setVolume(0.5) -- Setup volume for background music
   music:play() -- Launch background music
    
+   end
 end
 
 --end of draw
@@ -430,8 +445,9 @@ function checkShootCollision()
             
             if starship.life > 0 then
               starship.life = starship.life - 10
-            else
-              GAME_ACTIVE = false
+              if starship.life == 0 then
+                paused = true
+              end           
             end
           
             table.remove(enemies.shoot, ia)
