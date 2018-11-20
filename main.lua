@@ -57,11 +57,19 @@ function love.update(dt)
   starship.armor = totalArmorBall * 10
   starship.agility = totalAgilityBall * 10
   
+  maxStarshipLife = 50 + 10 * totalArmorBall
   starship.speed = 175 + 25 * totalAgilityBall
+  
   -- Setup bullet magics speed and check collision with world bounds
 
   for i,v in ipairs(starship.magics) do
-    v.x = v.x + 700 * dt
+    
+    if totalMagicBall > 15 then
+      v.x = v.x + 1000 * dt
+    else
+      v.x = v.x + 500 * dt
+    end
+    
     
     if v.x >= fullscreenWidth then
       table.remove(starship.magics, i)
@@ -186,7 +194,13 @@ function love.update(dt)
 -- Setup shoot magics if spacebar is down
   cooldown = math.max(cooldown - dt,0)
   if love.keyboard.isDown("space") and cooldown == 0 then
-    cooldown = 0.3
+    
+    if totalMagicBall > 15 then
+      cooldown = 0.15
+    else
+      cooldown = 0.3
+    end
+    
     magic = {}
     magic.x = starship.x + 54
     magic.y = starship.y + 28
@@ -382,6 +396,13 @@ function bulletCollision()
         va.y < v.y + 35 and
         v.type == 1 then
           
+          if totalPhysicsBall > 10 then
+            starship.life = starship.life + 2
+            if starship.life > maxStarshipLife then
+              starship.life = maxStarshipLife
+            end
+          end
+          
           spawnOrbs(enemies[i].x, enemies[i].y)
           score = score + 50
           table.remove(enemies, i)
@@ -418,7 +439,7 @@ function checkShootCollision()
           else
             table.remove(enemies.shoot, ia)
           end
-          
+          --
 
       end
 	end
